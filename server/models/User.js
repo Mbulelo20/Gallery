@@ -8,4 +8,4 @@ const UserSchema = mongoose.Schema({
 
 })
 
-module.exports = mongoose.model('user', UserSchema)
+module.exports = mongoose.model('user', UserSchema) // set 'user model' to use UserSchema

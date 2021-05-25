@@ -1,20 +1,20 @@
 const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const config = require('config')
+
 const User = require('../models/User');
 const { validationResult, check } = require('express-validator');
 
-const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.send("Get logged in user")
-})
 
 
 router.post(
     '/', 
     [
-        check('name', 'Please include your name').not().isEmpty(),
         check('email', 'Please include a valid email').isEmail(),
-        check('password', 'Please enter a password of six or more characters.').isLength({min: 6})
+        check('password', 'Password required!').exists()
     ],
     async (req, res) => {
     const errors = validationResult(req);
@@ -24,13 +24,15 @@ router.post(
     const {email, password} = req.body;
 
     try {
-        let user = await User.findOne({email});
+        let user = await User.findOne({email}); //find user by email
 
+        //if user doesn't exist
         if(!user){
             return res.status(400).json({msg: 'Invalid Credentials'})
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        //else
+        const isMatch = await bcrypt.compare(password, user.password); // compares the entered password with the registered password
 
         if(!isMatch){
             return res.status(400).json({msg: 'Invalid Credentials'})
@@ -44,7 +46,8 @@ router.post(
                 res.json({token});
             });
     } catch (err) {
-        
+        console.error(err.message);
+        res.status(500).send('Server Error')
     }
 })
 

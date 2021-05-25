@@ -4,9 +4,10 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/db')
 
 const app = express();
+//connect db
 connectDB();
 
-app.use(express.json({extended: false}))
+app.use(express.json({extended: false})) // this allows us to accept the body/data
 
 const port = process.env.PORT || 5000;
 
